@@ -1,0 +1,14 @@
+.DS_STORE
+*.mat
+*.fig
+*.tiff
+*.tif
+*.pdf
+*.jpg
+*.png
+*.nii
+*.nii.gz
+*.wav
+*.bin
+ExpResult*/*
+/StandAlone/test_remoteExp/*
