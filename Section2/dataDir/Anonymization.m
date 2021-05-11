@@ -22,5 +22,12 @@ save(sprintf('%s%03d',prefix,suffix),'-struct','S');
 end
     
 
+function [in,num_in] = fullPath(in)
+in        = fullfile({in.folder},{in.name})';
+num_in    = numel(in);
+end
+
+
+
 
 
