@@ -20,6 +20,7 @@ classdef analysis_EEG < visualize_data
         FOI
         legend_band
     end
+    
     methods (Static)        
         function tmp = fcn_loadEEG(path,para)
             load(path);
@@ -321,12 +322,9 @@ classdef analysis_EEG < visualize_data
                 COI = 36;
                 data = squeeze(data(:,:,find(visualize_data.COI==COI),:,:));
             end
-            f = figure;
+
             tf_median = nanmedian(nanmedian(data,3),4)';
-            imagesc([1 size(tf_median,2)*(1-ovrlp)],[1 frq],tf_median);
-            hold on;
-            visualize_data.setFig(2,10);
-            visualize_data.setCB(1,10,100);
+            f = visualize_data.fcn_drawTF(tf_median,[1 size(tf_median,2)*(1-ovrlp)],[1 frq]);
         end
         
         function [f,topo_median]    = drawTopo(visualize_data,data,range_task,FOI)
@@ -361,6 +359,40 @@ classdef analysis_EEG < visualize_data
             
         end
         
+        
+        function f = chkRawWave_wHil(data_EEG,COI,trl,col)
+            fprintf('chkRawWave\n');
+            if nargin < 2 || isempty(COI)
+                COI = data_EEG.COI;
+                COI(isempty(COI)) = 36;
+            end
+            if nargin < 3
+                trl = 1;
+            elseif isempty(trl)
+                trl = 1;
+            end
+            if nargin < 4    
+                col = [];
+            end
+            Fs   = data_EEG.Fs;
+            data = squeeze(data_EEG.signal_EEG(:,COI,:));
+            data = data(1:end-data_EEG.para.time_blank*Fs,trl);
+            data_hil = abs(hilbert(data));
+            data_erd = 100*(data_hil-nanmean(data_hil(1:5*Fs))) ./ nanmean(data_hil(1:5*Fs));
+            [lpb,lpa]= butter(3,[0.2]/(Fs/2));
+            data_erd_lpf = filtfilt(lpb,lpa,data_erd);
+            
+            t = 1/Fs : 1/Fs : size(data,1)/Fs;
+            f = data_EEG.fig;
+            subplot(2,1,1);
+            data_EEG.plotLine(data,t,col);
+            data_EEG.setFig(1,10)
+            subplot(2,1,2);
+            data_EEG.plotLine(data_erd_lpf,t,1);
+            data_EEG.setFig(1,10); 
+            setLabel('Time [s]', 'ERSP, %');
+            title(sprintf('Channel:%02d, Trial:%02d',COI,trl));
+        end
     end
     
     methods (Access = public)

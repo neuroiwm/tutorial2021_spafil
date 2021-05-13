@@ -68,7 +68,7 @@ classdef analysis_EEG_tutorial < analysis_EEG
         end
     end
     methods (Access = public)
-        function data_EEG = analysis_EEG_tutorial
+        function data_EEG = analysis_EEG_tutorial(para)
             
         end
     end

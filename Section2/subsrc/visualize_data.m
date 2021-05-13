@@ -16,8 +16,7 @@ classdef visualize_data
             hold on;
             set(f,'color',[1 1 1])
         end
-        
-               
+                 
         function setPos(num_case,varargin)
             if ~exist('num_case','var')
                 num_case = 2;
